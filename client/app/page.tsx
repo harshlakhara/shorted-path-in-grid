@@ -70,7 +70,9 @@ const Home = () => {
             {i.map((j: number, iy: number) => (
               <span
                 key={iy}
-                onClick={() => handleSelect(ix, iy)}
+                onClick={() =>
+                  selectedBlocks.length < 2 && handleSelect(ix, iy)
+                }
                 className={`block w-4 h-4  cursor-pointer ${
                   selectedBlocks.includes(`${ix},${iy}`) ? "bg-red-500" : ""
                 } ${path[`${ix},${iy}`] ? "bg-blue-800" : "bg-slate-500"}`}
@@ -92,7 +94,7 @@ const Home = () => {
       <button
         className={`bg-white font-bold text-purple-950 ${
           selectedBlocks.length < 2 ? "opacity-50" : "opacity-100"
-          }`}
+        }`}
         disabled={Object.keys(path).length == 0}
         type="button"
         onClick={() => {
