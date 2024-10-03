@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Loader from "@components/Loader";
 
 const WIDTH = 20;
 const HEIGHT = 20;
@@ -11,8 +12,10 @@ const GRID = new Array(HEIGHT).fill(COLUMNs);
 const Home = () => {
   const [selectedBlocks, setSelectedBlocks] = useState<Array<String>>([]);
   const [path, setPath] = useState<{ [x: string]: boolean }>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const findPath = async () => {
+    setIsLoading(true);
     if (selectedBlocks.length < 2) return;
     const coordinates = selectedBlocks.map((block) =>
       block.split(",").map((e) => parseInt(e))
@@ -46,6 +49,8 @@ const Home = () => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -73,9 +78,13 @@ const Home = () => {
                 onClick={() =>
                   selectedBlocks.length < 2 && handleSelect(ix, iy)
                 }
-                className={`block w-4 h-4  cursor-pointer ${
-                  selectedBlocks.includes(`${ix},${iy}`) ? "bg-red-500" : ""
-                } ${path[`${ix},${iy}`] ? "bg-blue-800" : "bg-slate-500"}`}
+                className={` block w-4 h-4 cursor-pointer ${
+                  selectedBlocks.includes(`${ix},${iy}`)
+                    ? "bg-red-500"
+                    : path[`${ix},${iy}`]
+                    ? "bg-blue-800"
+                    : "bg-slate-500"
+                }`}
               ></span>
             ))}
           </div>
@@ -103,6 +112,7 @@ const Home = () => {
       >
         Reset
       </button>
+      {isLoading && <Loader />}
     </div>
   );
 };
