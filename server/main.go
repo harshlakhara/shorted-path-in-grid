@@ -68,7 +68,7 @@ func findPath(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
+	fmt.Println(selectedCoordinates)
 	path := utils.FindShortestPath(selectedCoordinates)
 
 	res, err := json.Marshal(path)
@@ -78,7 +78,7 @@ func findPath(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println(path)
-	_, err = io.WriteString(w, string(res))
+	_, err = w.Write(res)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

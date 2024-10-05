@@ -11,6 +11,7 @@ const GRID = new Array(HEIGHT).fill(COLUMNs);
 
 const Home = () => {
   const [selectedBlocks, setSelectedBlocks] = useState<Array<String>>([]);
+  const [obstaclesBlocks, setObstaclesBlocks] = useState<Array<String>>([]);
   const [path, setPath] = useState<{ [x: string]: boolean }>({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,11 +21,16 @@ const Home = () => {
     const coordinates = selectedBlocks.map((block) =>
       block.split(",").map((e) => parseInt(e))
     );
+    const obstacles = obstaclesBlocks.map((block) => {
+      const [x, y] = block.split(",").map((e) => parseInt(e));
+      return { x, y };
+    });
     const start = { x: coordinates[0][0], y: coordinates[0][1] };
     const end = { x: coordinates[1][0], y: coordinates[1][1] };
     const body = {
-      start: start,
-      end: end,
+      start,
+      end,
+      obstacles,
       rows: Math.max(start.x, end.x) + 1,
       cols: Math.max(start.y, end.y) + 1,
     };
@@ -62,27 +68,58 @@ const Home = () => {
     setSelectedBlocks([...selectedBlocks, `${x},${y}`]);
   };
 
+  const addObstacles = (x: number, y: number) => {
+    const coords = `${x},${y}`;
+    if (obstaclesBlocks.includes(coords)) {
+      setObstaclesBlocks(obstaclesBlocks.filter((blc) => blc != coords));
+    } else if (!selectedBlocks.includes(coords)) {
+      setObstaclesBlocks([...obstaclesBlocks, coords]);
+    }
+  };
+
   const resetGrid = () => {
     setSelectedBlocks([]);
     setPath({});
   };
   return (
     <div className="flex flex-col align-middle justify-center mx-auto max-w-fit">
-      <h1 className="text-center h-8 text-lg">GRID</h1>
+      <div>
+        <h1 className="text-center h-8 text-lg">GRID</h1>
+        <div className="my-3">
+          <h3>Legend</h3>
+          <p>
+            <span className="bg-yellow-400 inline-block w-4 h-4"></span>
+            &nbsp; Source/Destination {"  "}
+            <span className="bg-red-700 inline-block w-4 h-4"></span>
+            &nbsp; Obstacles {"  "}
+            <span className="bg-blue-600 inline-block w-4 h-4"></span>
+            &nbsp; Path
+          </p>
+          <p className="mt-3">
+            <code>Click</code> to add{" "}
+            <span className="text-yellow-400">Source & Destination</span> <br />
+            <code>Ctrl + click</code> to add{" "}
+            <span className="text-red-500">Obstacles</span>
+          </p>
+        </div>
+      </div>
       <div>
         {GRID.map((i, ix) => (
           <div key={ix} className="flex justify-normal gap-2 mb-2">
             {i.map((j: number, iy: number) => (
               <span
                 key={iy}
-                onClick={() =>
-                  selectedBlocks.length < 2 && handleSelect(ix, iy)
-                }
+                onClick={(e) => {
+                  if (e.ctrlKey) addObstacles(ix, iy);
+                  selectedBlocks.length < 2 && handleSelect(ix, iy);
+                }}
                 className={` block w-4 h-4 cursor-pointer ${
                   selectedBlocks.includes(`${ix},${iy}`)
-                    ? "bg-red-500"
+                    ? "bg-yellow-400"
                     : path[`${ix},${iy}`]
-                    ? "bg-blue-800"
+                    ? "bg-blue-600"
+                    : obstaclesBlocks.includes(`${ix},${iy}`)
+                    ? "bg-red-700"
                     : "bg-slate-500"
                 }`}
               ></span>

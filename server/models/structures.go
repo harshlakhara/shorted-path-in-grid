@@ -1,10 +1,11 @@
 package models
 
 type SelectedCoordinates struct {
-	Start Coordinates `json:"start"`
-	End   Coordinates `json:"end"`
-	Cols  int         `json:"cols"`
-	Rows  int         `json:"rows"`
+	Start     Coordinates   `json:"start"`
+	End       Coordinates   `json:"end"`
+	Cols      int           `json:"cols"`
+	Rows      int           `json:"rows"`
+	Obstacles []Coordinates `json:"obstacles"`
 }
 
 type Coordinates struct {

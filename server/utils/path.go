@@ -50,6 +50,10 @@ func FindShortestPath(grid models.SelectedCoordinates) []models.Coordinates {
 		matrix[i] = make([]int, grid.Cols)
 	}
 
+	for _, coords := range grid.Obstacles {
+		matrix[coords.X][coords.Y] = -1
+	}
+
 	visited := make([][]bool, grid.Rows)
 	for i := range visited {
 		visited[i] = make([]bool, grid.Cols)
